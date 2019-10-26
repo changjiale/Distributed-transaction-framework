@@ -10,4 +10,6 @@ import java.lang.annotation.Target;
 public @interface TxTransactional {
 
     boolean isStart() default false;
+
+    boolean isEnd() default false;
 }

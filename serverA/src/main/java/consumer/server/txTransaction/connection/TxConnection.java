@@ -1,5 +1,8 @@
 package consumer.server.txTransaction.connection;
 
+import consumer.server.txTransaction.transactional.TransactionType;
+import consumer.server.txTransaction.transactional.TxTransaction;
+
 import java.sql.*;
 import java.util.Map;
 import java.util.Properties;
@@ -8,9 +11,11 @@ import java.util.concurrent.Executor;
 public class TxConnection implements Connection {
 
     private Connection connection;
+    private TxTransaction txTransaction;
 
-    public TxConnection(Connection connection) {
+    public TxConnection(Connection connection, TxTransaction txTransaction) {
         this.connection = connection;
+        this.txTransaction = txTransaction;
     }
 
     @Override
@@ -18,10 +23,25 @@ public class TxConnection implements Connection {
         //wait
 
         //等待事务组通知
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                txTransaction.getTaskLock().waitTask();
+                try {
+                    if (txTransaction.getTransactionType().equals(TransactionType.COMMIT)) {
+                        connection.commit();
+                    } else {
+                        connection.rollback();
+                    }
+                    connection.close();
 
-        //commit
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
 
-        connection.commit();
+            });
+
     }
 
     @Override

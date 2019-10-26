@@ -1,6 +1,7 @@
 package consumer.server.txTransaction.aspect;
 
 import consumer.server.txTransaction.connection.TxConnection;
+import consumer.server.txTransaction.transactional.TxTransactionManager;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -17,7 +18,7 @@ public class TxDataSourceAspect {
         try {
             Connection connection = (Connection) point.proceed();
 
-            return new TxConnection(connection);
+            return new TxConnection(connection, TxTransactionManager.getCurrent());
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }
