@@ -17,7 +17,7 @@ public class ConService{
     private RestTemplate restTemplate;
 
     @Transactional
-    @TxTransactional
+    @TxTransactional(isStart = true)
     public void test(){
         Test test = new Test();
         test.setName("111");
