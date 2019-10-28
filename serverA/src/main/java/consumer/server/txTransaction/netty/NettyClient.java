@@ -10,11 +10,14 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.string.StringDecoder;
+import io.netty.handler.codec.string.StringEncoder;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.stereotype.Component;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+@Component
 public class NettyClient implements InitializingBean {
 
     public NettyClientHandler client = null;
@@ -23,7 +26,7 @@ public class NettyClient implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        start("localhost", 8083);
+        start("localhost", 8088);
     }
 
     public void start(String hostName, Integer port) {
@@ -39,9 +42,9 @@ public class NettyClient implements InitializingBean {
                     @Override
                     protected void initChannel(SocketChannel socketChannel) throws Exception {
                         ChannelPipeline pipeline = socketChannel.pipeline();
-                        pipeline.addLast("deoder", new StringDecoder());
-                        pipeline.addLast("encoder", new StringDecoder());
-                        pipeline.addLast("handler",new NettyClientHandler());
+                        pipeline.addLast("decoder", new StringDecoder());
+                        pipeline.addLast("encoder", new StringEncoder());
+                        pipeline.addLast("handler",client);
                     }
                 });
         try {

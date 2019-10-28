@@ -1,7 +1,6 @@
 package consumer.server.txTransaction.aspect;
 
 import consumer.server.txTransaction.annotation.TxTransactional;
-import consumer.server.txTransaction.connection.TxConnection;
 import consumer.server.txTransaction.transactional.TransactionType;
 import consumer.server.txTransaction.transactional.TxTransaction;
 import consumer.server.txTransaction.transactional.TxTransactionManager;
@@ -10,11 +9,12 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.core.Ordered;
+import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
-import java.sql.Connection;
 
 @Aspect
+@Component
 public class TxTransactionAspect implements Ordered {
 
     @Around("@annotation(consumer.server.txTransaction.annotation.TxTransactional)")
@@ -29,6 +29,8 @@ public class TxTransactionAspect implements Ordered {
         if (txAnnotation.isStart()) {
             //创建事务组
             groupId = TxTransactionManager.createTxTransactionGroup();
+        } else {
+            groupId = TxTransactionManager.getCurrentGroupId();
         }
 
 
@@ -38,15 +40,18 @@ public class TxTransactionAspect implements Ordered {
             point.proceed();  //spring原有逻辑
 
             txTransaction.setTransactionType(TransactionType.COMMIT);
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
+        } catch (Exception e) {
             txTransaction.setTransactionType(TransactionType.ROLLBAK);
+            e.printStackTrace();
+        } catch (Throwable throwable) {
+            txTransaction.setTransactionType(TransactionType.ROLLBAK);
+            throwable.printStackTrace();
         }
         TxTransactionManager.addTxTransaction(groupId, txTransaction, txAnnotation.isEnd());
     }
 
     @Override
     public int getOrder() {
-        return 1000;
+        return 10000;
     }
 }

@@ -1,9 +1,11 @@
 package server.mapper;
 
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
-import server.model.Test;
-import tk.mybatis.mapper.common.BaseMapper;
+import org.apache.ibatis.annotations.Param;
 
 @Mapper
-public interface ProMapper extends BaseMapper<Test> {
+public interface ProMapper {
+    @Insert("insert into test(name) values(#{name})")
+    public void insert(@Param("name") String name);
 }

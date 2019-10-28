@@ -1,15 +1,15 @@
 package consumer.server.txTransaction.transactional;
 
 import com.alibaba.fastjson.JSONObject;
-import consumer.server.txTransaction.connection.TxConnection;
 import consumer.server.txTransaction.netty.NettyClient;
-import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+@Component
 public class  TxTransactionManager {
 
     private static NettyClient nettyClient;
@@ -32,7 +32,7 @@ public class  TxTransactionManager {
         jsonObject.put("groupId", groupId);
         jsonObject.put("command", "create");
         nettyClient.send(jsonObject);
-
+        System.out.println("创建事务组");
         return groupId;
     }
 
@@ -42,6 +42,7 @@ public class  TxTransactionManager {
         TxTransaction txTransaction = new TxTransaction(groupId, transactionId);
         map.put(groupId, txTransaction);
         current.set(txTransaction);
+        System.out.println("创建事务");
         return txTransaction;
 
     }
@@ -55,6 +56,7 @@ public class  TxTransactionManager {
         jsonObject.put("isEnd", isEnd);
 
         nettyClient.send(jsonObject);
+        System.out.println("添加事务");
         System.out.println("添加事务");
     }
 
@@ -77,7 +79,7 @@ public class  TxTransactionManager {
         currentGroupId.set(groupId);
     }
 
-    public static Integer getTransactionCount() {
+    public static Integer  getTransactionCount() {
         return transactionCount.get();
     }
 

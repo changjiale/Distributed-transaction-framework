@@ -21,6 +21,7 @@ import java.util.Map;
  * 3. 统计并判断事务组内的各个子事务状态，以算出当前事务组的状态（提交or回滚）
  * 4. 通知各个子事务提交或回滚
  */
+
 public class NettyServerHandler extends ChannelInboundHandlerAdapter {
 
     private static ChannelGroup channelGroup = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);

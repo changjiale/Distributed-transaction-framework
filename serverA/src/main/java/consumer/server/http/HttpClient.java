@@ -1,12 +1,12 @@
 package consumer.server.http;
 
 import consumer.server.txTransaction.transactional.TxTransactionManager;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.springframework.http.HttpStatus;
 
 public class HttpClient {
 
